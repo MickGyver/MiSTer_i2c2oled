@@ -89,13 +89,13 @@ function init_display() {
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x00    # no vertical shift
 
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x40    # Set Display Start Line to 000000b
-	if [ "${rotate}" = "true" ]; then
-		i2cset -y ${i2cbus} ${oledaddr} 0x00 0xA0    # Set Segment Re-map, column address 0 is mapped to SEG0 (horisontal flip)
-		i2cset -y ${i2cbus} ${oledaddr} 0x00 0xC0    # Set COM Output Scan Direction. Scan from COM0 to COM7 (vertical flip)
-	else
-		i2cset -y ${i2cbus} ${oledaddr} 0x00 0xA1    # Set Segment Re-map, column address 127 is mapped to SEG0
-		i2cset -y ${i2cbus} ${oledaddr} 0x00 0xC8    # Set COM Output Scan Direction, remapped mode. Scan from COM7 to COM0 
-	fi
+  if [ "${rotate}" = "true" ]; then
+    i2cset -y ${i2cbus} ${oledaddr} 0x00 0xA0    # Set Segment Re-map, column address 0 is mapped to SEG0 (horisontal flip)
+    i2cset -y ${i2cbus} ${oledaddr} 0x00 0xC0    # Set COM Output Scan Direction. Scan from COM0 to COM7 (vertical flip)
+  else
+    i2cset -y ${i2cbus} ${oledaddr} 0x00 0xA1    # Set Segment Re-map, column address 127 is mapped to SEG0
+    i2cset -y ${i2cbus} ${oledaddr} 0x00 0xC8    # Set COM Output Scan Direction, remapped mode. Scan from COM7 to COM0 
+  fi
 
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0xDA    # Set COM Pins Hardware Configuration
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x02    # Alternative COM pin configuration, Disable COM Left/Right remap needed for 128x64 (0x12 for 128x64, 0x02 for 128x32)
