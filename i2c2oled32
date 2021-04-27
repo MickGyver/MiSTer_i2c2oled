@@ -131,7 +131,7 @@ function reset_cursor() {
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x7F  #   set end address (127 max)
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x22  #   set page address
   i2cset -y ${i2cbus} ${oledaddr} 0x00 0x00  #   set start address
-  i2cset -y ${i2cbus} ${oledaddr} 0x00 0x07  #   set end address (7 max)
+  i2cset -y ${i2cbus} ${oledaddr} 0x00 0x03  #   set end address (3 max for 32px, 7 max for 64px)
 }
 
 function clearscreen() {
@@ -185,7 +185,7 @@ function showpix() {
       fi # 
     done # for i
   done # for j
-	reset_cursor  # Set Cursor to Top-Left
+	#reset_cursor  # Set Cursor to Top-Left
   display_on
 }
 
@@ -212,6 +212,7 @@ sendpix() {
 
 display_off     # Switch Display off
 init_display    # Send INIT Commands
+reset_cursor
 #flushscreen     # Fill the Screen completly
 #display_on      # Switch Display on
 #sleep 0.5
