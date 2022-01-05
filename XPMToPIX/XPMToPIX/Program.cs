@@ -49,6 +49,18 @@ namespace XPMToPIX
             }
           }
 
+          // Find symbols for colors
+          string[] symbols = { ".", " " };  
+          for (int i = 2; i <= 4; i++)
+          {
+            string str = pixLines[i].Trim();
+            str = str.Trim('"');
+            if (str.ToLower().Contains("#000000"))
+              symbols[0] = str.Substring(0, 1);
+            if (str.ToLower().Contains("#ffffff"))
+              symbols[1] = str.Substring(0, 1);
+          }
+
           // Replace }; with ) of last line
           pixLines[lineMax] = pixLines[lineMax].Replace("};", ")");
 
@@ -57,7 +69,7 @@ namespace XPMToPIX
 
           // Write all lines
           for (int i = 5; i <= lineMax; i++)
-            pix += pixLines[i].Replace(".", "0").Replace(" ", "1") + "\n";
+            pix += pixLines[i].Replace(symbols[0], "0").Replace(symbols[1], "1") + "\n";
 
           // Save the PIX to the same folder with the same name (with .pix extension)
           File.WriteAllText(Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file)) + ".pix", pix);
