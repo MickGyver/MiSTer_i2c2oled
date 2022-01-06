@@ -62,7 +62,10 @@ namespace XPMToPIX
           {
             if (pixLines[i].Contains("};"))
             {
-              lineMax = i;
+              if (pixLines[i].Trim().Length == 2) // "Empty" ending line
+                lineMax = i - 1;
+              else
+                lineMax = i;
               break;
             }
           }
@@ -80,7 +83,10 @@ namespace XPMToPIX
           }
 
           // Replace }; with ) of last line
-          pixLines[lineMax] = pixLines[lineMax].Replace("};", ")");
+          string tmp = pixLines[lineMax].Trim();
+          if (tmp.EndsWith("};"))
+            pixLines[lineMax] = tmp.Substring(0, tmp.Length - 2);
+          pixLines[lineMax] += ")";
 
           // Write "header"
           pix = "#!/bin/bash\nlogo=(";
