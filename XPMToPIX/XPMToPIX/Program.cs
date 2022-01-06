@@ -9,21 +9,30 @@ namespace XPMToPIX
   {
     static void Main(string[] args)
     {
+      bool invert = false;
       // Set folder (application path or first argument)
       string folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
       if (args.Length > 0)
       {
-        if (Directory.Exists(args[0]))
-          folder = args[0];
-        else
+        for (int i = 0; i < args.Length; i++)
         {
-          Console.WriteLine("Path does not exist!");
-          Environment.Exit(0);
+          if (args[i].ToLower() == "--inv" || args[i].ToLower() == "--invert" || args[i].ToLower() == "-inv" || args[i].ToLower() == "-invert")
+            invert = true;
+          else if (Directory.Exists(args[i]))
+            folder = args[i];
+          else
+          {
+            Console.WriteLine("Path does not exist!");
+            Environment.Exit(0);
+          }
         }
       }
 
-      Console.WriteLine("------------------------------------------------------------");
+      Console.WriteLine("-----------------------------------------------------------");
+      Console.WriteLine("--  XPM To PIX Converter v0.3 by MickGyver @ DaemonBite  --");
+      Console.WriteLine("-----------------------------------------------------------");
       Console.WriteLine("Path: " + folder);
+      Console.WriteLine("Colors: " + (invert ? "Inverted" : "Normal"));
       Console.WriteLine("Converting all XPM images to PIX...");
 
       // Convert all files in folder
@@ -65,9 +74,9 @@ namespace XPMToPIX
             string str = pixLines[i].Trim();
             str = str.Trim('"');
             if (str.ToLower().Contains("#000000") || str.ToLower().Contains("black"))
-              symbols[0] = str.Substring(0, 1);
+              symbols[invert ? 1 : 0] = str.Substring(0, 1);
             if (str.ToLower().Contains("#ffffff") || str.ToLower().Contains("white"))
-              symbols[1] = str.Substring(0, 1);
+              symbols[invert ? 0 : 1] = str.Substring(0, 1);
           }
 
           // Replace }; with ) of last line
@@ -92,7 +101,7 @@ namespace XPMToPIX
           Console.WriteLine(" done!");
       }
 
-      Console.WriteLine("------------------------------------------------------------");
+      Console.WriteLine("-----------------------------------------------------------");
 
     }
   }

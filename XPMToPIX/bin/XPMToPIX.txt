@@ -5,3 +5,7 @@ XPMToPIX [folder]
 
 If you run XPMToPIX without the folder argument, then XPMToPIX will convert
 all XPM files in the folder where XPMToPIX was run from.
+
+You can supply an optional argument -inv, --inv, -invert, --invert. This
+will invert the colors making a black pixel white on the display and vice
+versa.
