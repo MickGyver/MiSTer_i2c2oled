@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace XPMToPIX
@@ -27,19 +28,27 @@ namespace XPMToPIX
 
       // Convert all files in folder
       string [] files = Directory.GetFiles(folder, "*.xpm");
+      List<string> pixLines = new List<string>();
       foreach (string file in files)
       {
-        Console.Write("Converting: \"" + Path.GetFileName(file) + "\"..."); 
+        Console.Write("Converting: \"" + Path.GetFileName(file) + "\"...");
+
+        pixLines.Clear();
 
         string xpm = File.ReadAllText(file);
         string pix = xpm.Replace("\r\n", "\n");
-        string [] pixLines = pix.Split('\n');
+        string [] pixLinesTemp = pix.Split('\n');
+        foreach(string line in pixLinesTemp)
+        {
+          if (!line.Trim().StartsWith("/*"))
+            pixLines.Add(line);
+        }
         bool error = false;
 
         try
         {
           // Find last line to use (the one with };)
-          int lineMax = pixLines.Length - 1;
+          int lineMax = pixLines.Count - 1;
           for (int i = lineMax; i >= 0; i--)
           {
             if (pixLines[i].Contains("};"))
@@ -51,13 +60,13 @@ namespace XPMToPIX
 
           // Find symbols for colors
           string[] symbols = { ".", " " };  
-          for (int i = 2; i <= 4; i++)
+          for (int i = 1; i <= 3; i++)
           {
             string str = pixLines[i].Trim();
             str = str.Trim('"');
-            if (str.ToLower().Contains("#000000"))
+            if (str.ToLower().Contains("#000000") || str.ToLower().Contains("black"))
               symbols[0] = str.Substring(0, 1);
-            if (str.ToLower().Contains("#ffffff"))
+            if (str.ToLower().Contains("#ffffff") || str.ToLower().Contains("white"))
               symbols[1] = str.Substring(0, 1);
           }
 
@@ -68,7 +77,7 @@ namespace XPMToPIX
           pix = "#!/bin/bash\nlogo=(";
 
           // Write all lines
-          for (int i = 5; i <= lineMax; i++)
+          for (int i = 4; i <= lineMax; i++) // Starting at line 4, hardcoded, could be made smarter
             pix += pixLines[i].Replace(symbols[0], "0").Replace(symbols[1], "1") + "\n";
 
           // Save the PIX to the same folder with the same name (with .pix extension)
